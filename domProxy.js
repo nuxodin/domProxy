@@ -5,17 +5,16 @@ function domProxy (arg) {
         arg instanceof Node
             ? [arg]
             : typeof arg === 'string'
-                ? (arg[0]==='<' ? strToDom(arg) : d.querySelectorAll(arg))
+                ? (arg[0] === '<' ? strToDom(arg) : d.querySelectorAll(arg))
                 : arg
     );
     return new Proxy(list, handler);
 }
 
-function strToDom(str){
+const strToDom = str => {
     var el = d.createElement('template');
     el.innerHTML = str;
     return el.content.childNodes;
-    return el.content.children;
 }
 
 const handler = {
@@ -98,7 +97,7 @@ const extensions = {
 
 export default domProxy;
 
-/*
+/* old code, for inspirations
 The = function(){
     var undf, k, d=document, w=self
     ,Ext = {
