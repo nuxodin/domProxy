@@ -1,7 +1,7 @@
-# domProxy
+# domProxy (alpha)
 
-lightweight 570 bytes at the moment!  
-(alpha, I ask you to test and participate)
+lightweight **570 bytes** at the moment!  
+I ask you to test and participate  
 
 ## What jQuery would look like if it was released in 2021
 
