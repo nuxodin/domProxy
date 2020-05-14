@@ -1,18 +1,27 @@
+const d = document;
+
 function domProxy (arg) {
-    const d = document;
     const list = new Set(
         arg instanceof Node
             ? [arg]
             : typeof arg === 'string'
-                ? (arg[0]==='<' ? d.createElement('template').content : d.querySelectorAll(arg))
+                ? (arg[0]==='<' ? strToDom(arg) : d.querySelectorAll(arg))
                 : arg
     );
     return new Proxy(list, handler);
 }
 
+function strToDom(str){
+    var el = d.createElement('template');
+    el.innerHTML = str;
+    return el.content.childNodes;
+    return el.content.children;
+}
+
 const handler = {
     get(elements, prop){
         if (callOnElementsSet[prop]) return elements[prop].bind(elements);
+        if (prop === 'elements') return [...elements];
         if (extensions[prop]) {
             return function(...args){
                 return returnFromElements(this, elements, element=>extensions[prop](element, ...args))

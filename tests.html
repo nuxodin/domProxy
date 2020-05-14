@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 
+<h1>domProxy tests</h1>
 
-test:
 <ul>
     <li id=test>
         test
@@ -41,12 +41,8 @@ $('li').addEventListener('click',function listener(){
 
 $('span').hidden = true;
 
-
-/*
-for (let italic of span.nextAll('i')) {
-    console.log(italic)
-}
-*/
+var els = $('<div style="background:blue;">asdf</div> abc <div style="background:blue;">asdf</div>');
+document.body.append(...els.elements);
 
 
 </script>
