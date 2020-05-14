@@ -1,9 +1,10 @@
 function domProxy (arg) {
+    const d = document;
     const list = new Set(
         arg instanceof Node
             ? [arg]
             : typeof arg === 'string'
-                ? (arg[0]==='<' ? fragment(arg) : document.querySelectorAll(arg))
+                ? (arg[0]==='<' ? d.createElement('template').content : d.querySelectorAll(arg))
                 : arg
     );
     return new Proxy(list, handler);
