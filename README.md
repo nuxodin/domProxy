@@ -6,6 +6,8 @@
 ### ussage
 
 ```js
+import $ from './domProxy.js';
+
 $('.el').children.hidden = true;
 $('.el').setAttribute('data-b','x').setAttribute('data-b', 'y');
 $('.el').nextAll('.deleteable', true /* including me */).remove();
