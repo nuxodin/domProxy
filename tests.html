@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+
+
+test:
+<ul>
+    <li id=test>
+        test
+        <span id=spanEl>a</span>
+        <i>a</i>
+        <i>b</i>
+        <i>c</i>
+        <i>d</i>
+        <span>a</span>
+    </li>
+    <li id=test2>
+        test
+        <span>a</span>
+        <i>a</i>
+        <span>a</span>
+    </li>
+</ul>
+
+
+<script type=module>
+import $ from './domProxy.js';
+
+let span = $(spanEl);
+
+let italics = span.next('span', true);
+console.log(italics);
+for (let italic of italics) {
+    console.log(italic);
+}
+italics.forEach(italic=>console.log(italic))
+
+$('li').addEventListener('click',function listener(){
+    console.log('triggered on', this)
+    this.style.backgroundColor = 'red';
+    this.removeEventListener('click', listener)
+})
+
+$('span').hidden = true;
+
+
+/*
+for (let italic of span.nextAll('i')) {
+    console.log(italic)
+}
+*/
+
+
+</script>

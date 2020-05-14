@@ -1,3 +1,94 @@
+function domProxy (arg) {
+    const list = new Set(
+        arg instanceof Node
+            ? [arg]
+            : typeof arg === 'string'
+                ? (arg[0]==='<' ? fragment(arg) : document.querySelectorAll(arg))
+                : arg
+    );
+    return new Proxy(list, handler);
+}
+
+const handler = {
+    get(elements, prop){
+        if (callOnElementsSet[prop]) return elements[prop].bind(elements);
+        if (extensions[prop]) {
+            return function(...args){
+                return returnFromElements(this, elements, element=>extensions[prop](element, ...args))
+            }
+        }
+        let first = elements.values().next().value;
+        if (!first) return null;
+        if (typeof first[prop] === 'function') {
+        //if (typeof HTMLElement.prototype[prop] === 'function') { // better ask the prototype if it should be function?
+            return function(...args){
+                return returnFromElements(this, elements, element=>{
+                    return element[prop].apply(element, args);
+                })
+            }
+        } else {
+            return returnFromElements(this, elements, element=>element[prop]);
+        }
+        // else return elements[prop].bind(elements); // todo if not in prototype? props of the elements-set
+    },
+    set(elements, prop, value){
+        for (let element of elements) element[prop] = value;
+        return true;
+    }
+}
+
+const callOnElementsSet = {
+    [Symbol.iterator]:1,
+    'forEach':1,
+};
+
+
+function returnFromElements(proxy, elements, call) {
+    let retIsDefined = true;
+    const returns = new Set();
+    for (let element of elements) {
+        const value = call(element);
+        if (value === undefined) {
+            retIsDefined = false;
+        } else if (typeof value[Symbol.iterator] === 'function') { // add items if it is iterable
+            for (let item of value) returns.add(item);
+        } else if (value instanceof Node) { // add items if its node
+            returns.add(value);
+        } else {
+            return value;
+        }
+    }
+    if (!retIsDefined) return proxy; // chain if return value is undefined
+    return domProxy(returns);
+}
+
+function *walkGen(el, operation, selector, incMe){
+    if (!incMe) el = el[operation];
+    while (el) {
+        if (selector) {
+            if (el.matches(selector)) yield el;
+        } else {
+            yield next;
+        }
+        el = el[operation];
+    }
+};
+
+const extensions = {
+    //first(el, sel) { const node = el.firstElementChild; return sel ? node && this.next(node, sel, true) : node; },
+    //last(el, sel)  { const node = el.lastElementChild;  return sel ? node && this.prev(node, sel, true) : node; },
+    nextAll  :(el, sel, incMe) => walkGen(el, 'nextElementSibling', sel, incMe),
+    prevAll  :(el, sel, incMe) => walkGen(el, 'previousElementSibling', sel, incMe) ,
+    parentAll:(el, sel, incMe) => walkGen(el, 'parentNode', sel, incMe) ,
+    next(...args)  { return this.nextAll(...args).next().value },
+    prev(...args)  { return this.prevAll(...args).next().value },
+    parent(...args){ return this.parentAll(...args).next().value },
+    //childs(el, selector){ return this.nextAll(el.firstElementChild, selector, true) },
+}
+
+export default domProxy;
+
+/*
 The = function(){
     var undf, k, d=document, w=self
     ,Ext = {
@@ -55,8 +146,8 @@ The = function(){
 
             $.NodeList.prototype[k] =
 //          HTMLCollection.prototype[k] = // ie
-//          NodeList.prototype[k] = 
-            fn.each($.NodeList); 
+//          NodeList.prototype[k] =
+            fn.each($.NodeList);
         }
     };
     $.NodeList = function(els){
@@ -68,8 +159,8 @@ The = function(){
         }
     };
     $.NodeList.prototype = [];
-    $.cEl = function(tag){ return d.createElement(tag); }
-    $.cNL = function(els){ return new $.NodeList(els); }
+    $.cEl = function(tag){ return d.createElement(tag); };
+    $.cNL = function(els){ return new $.NodeList(els); };
     $.extEl({
         css(prop, value){
             if (value === undf) {
@@ -92,16 +183,7 @@ The = function(){
             if (this===d) return sel===this;  // ie9 on document
             return (sel.dlg ? sel===this : this.matches(sel) ) && this;
         },
-        _walk(operation,sel,incMe,un){
-            return incMe && this.is(sel) ? un  : (un=this[operation]) && ( sel ? un._walk(operation,sel,1) : un ); 
-        },
-        fst(sel, n){ n = this.firstElementChild; return sel ? n && n.nxt(sel,1) : n; },
-        lst(sel, n){ n = this.lastElementChild;  return sel ? n && n.prv(sel,1) : n; },
-        prv(sel,incMe){ return this._walk('previousElementSibling',sel,incMe); },
-        nxt(sel,incMe){ return this._walk('nextElementSibling',sel,incMe); },
-        p(sel,incMe){ return this._walk('parentNode',sel,incMe); },
         ch(sel){ return sel ? this.ch().is(sel) : $.cNL(this.children); },
-        rm(){ return this.remove(); }, // todo: no return!?
         hs(el,incMe){ return this===el ? (incMe?this:false) : this.contains(el) && this; },
         ad(el,who){
             var trans = {after:'afterEnd',bottom:'beforeEnd',before:'beforeBegin',top:'afterBegin'};
@@ -119,8 +201,7 @@ The = function(){
             }
         }.multi(),
         fire(n,ce){
-            var e = d.createEvent('Events');
-            e.initEvent(n, true, false);
+            var e = new CustomEvent(n, {bubbels:true});
             this.dispatchEvent( $.ext(e,ce||{}) );
         },
         one(n,cb){
@@ -150,39 +231,11 @@ The = function(){
             this.style.zIndex = p.$zTop = z+1;
         },
         html(v){ this.innerHTML = v; },
-        rct(rct){
-            rct && this.css({top:rct.y+'px',left:rct.x+'px',width:rct.w+'px',height:rct.h+'px'});
-            var pos = this.getBoundingClientRect();
-            return new $.rct(pos.left+pageXOffset,pos.top+pageYOffset,this.offsetWidth,this.offsetHeight)
-        }
     });
-    $.Eventer = {
-        initEvent(n){
-            !this._Es && (this._Es={});
-            !this._Es[n] && (this._Es[n]=[]);
-            return this._Es[n];
-        },
-        on(n,fn){
-            this.initEvent(n).push(fn);
-        }.multi(),
-        no(n,fn){
-            var Events = this.initEvent(n);
-            Events.splice(Events.indexOf(fn) ,1);
-        }.multi(),
-        fire(n,e){
-            var Events = this.initEvent(n), i=0, E;
-            while (E=Events[i++]) E.bind(this)(e);
-        }
-    };
-    k = d.els('script');
-    k = k[k.length-1];
-    $.use.path = k.attr('basis') || k.src.replace(/\/[^\/]+$/,'/');
-    $.use.cbs = {};
 
     on(vendor+'TransitionEnd',function(e){ e.target.fire('transitionend',e) });
     on('DOMMouseScroll',function(e){ e.wheelDelta = -e.detail*40; e.target.fire('mousewheel',e) }); // firefox?
 
-    w.$||(w.$=$);
-    return $;
-
 }();
+
+*/
