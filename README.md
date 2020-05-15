@@ -62,5 +62,5 @@ nodeList.off(types, listener, options)
 ```
 
 ### take part
-I am very happy about every participation, even if it is only spelling corrections.
+I am very happy about every participation, even if it is only spelling corrections.  
 And leave a star if you like it!
