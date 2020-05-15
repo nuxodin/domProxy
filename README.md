@@ -25,22 +25,22 @@ If a method returns `undefined ` on elements, the domProxy will be returned to a
 ### api
 
 ```js
-nodeList.next(selector?: string, includingMe?:boolean) 
+nodeList.next(selector?, includingSelf?) 
 // returns next sibling that matches
 
-nodeList.nextAll(selector?: string, includingMe?:boolean)
+nodeList.nextAll(selector?, includingSelf?)
 // returns all next siblings that matches
 
-nodeList.prev(selector?: string, includingMe?:boolean) 
+nodeList.prev(selector?, includingSelf?) 
 // returns previous sibling that matches
 
-nodeList.prevAll(selector?: string, includingMe?:boolean) 
+nodeList.prevAll(selector?, includingSelf?) 
 // returns all previous matching siblings
 
-nodeList.parent(selector?: string, includingMe?:boolean) 
+nodeList.parent(selector?, includingSelf?) 
 // returns next parent that matches
 
-nodeList.parentAll(selector?: string, includingMe?:boolean)
+nodeList.parentAll(selector?, includingSelf?)
 // returns all parents matching
 
 // ...and every api available on the Elements itself
