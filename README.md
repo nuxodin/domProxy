@@ -4,6 +4,10 @@ lightweight **570 bytes** (gzip) at the moment!
 I ask you to test and participate  
 
 ## What jQuery would look like if it was released in 2021
+Some things i still miss from jQuery, like assigning multiple events to multiple elements in one go.
+`elements.addEventListener('click focus', listener)`  
+Using js-proxies, its now possible to do this with very little code.  
+The goal of this project is to integrate only the really useful apis.  
 
 ### ussage
 
@@ -56,3 +60,7 @@ nodeList.off(types, listener, options)
 // ...and every api available on the Elements itself
 
 ```
+
+### take part
+I am very happy about every participation, even if it is only spelling corrections.
+And leave a star if you like it!
