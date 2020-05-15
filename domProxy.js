@@ -12,7 +12,7 @@ function domProxy (arg) {
 }
 
 const strToDom = str => {
-    var el = d.createElement('template');
+    const el = d.createElement('template');
     el.innerHTML = str;
     return el.content.childNodes;
 }
