@@ -5,18 +5,18 @@
 <ul>
     <li id=test>
         test
-        <span id=spanEl>a</span>
+        <span id=spanEl>span</span>
         <i>a</i>
         <i>b</i>
         <i>c</i>
         <i>d</i>
-        <span>a</span>
+        <span>other span</span>
     </li>
     <li id=test2>
         test
-        <span>a</span>
+        <span>span</span>
         <i>a</i>
-        <span>a</span>
+        <span>span</span>
     </li>
 </ul>
 
@@ -24,25 +24,26 @@
 <script type=module>
 import $ from './domProxy.js';
 
+
 let span = $(spanEl);
 
-let italics = span.next('span', true);
-console.log(italics);
+let italics = span.nextAll('span', true);
+console.log(italics.size)
 for (let italic of italics) {
     console.log(italic);
 }
 italics.forEach(italic=>console.log(italic))
 
-$('li').addEventListener('click',function listener(){
-    console.log('triggered on', this)
+$('li').on('click mouseover',function listener(e){
     this.style.backgroundColor = 'red';
-    this.removeEventListener('click', listener)
+    this.innerHTML += ' '+e.type;
+    $(this).off(e.type, listener)
 })
 
 $('span').hidden = true;
 
 var els = $('<div style="background:blue;">asdf</div> abc <div style="background:blue;">asdf</div>');
-document.body.append(...els.elements);
+document.body.append(...els.keys());
 
 
 </script>

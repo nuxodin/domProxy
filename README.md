@@ -43,6 +43,16 @@ nodeList.parent(selector?, includingSelf?)
 nodeList.parentAll(selector?, includingSelf?)
 // returns all parents matching
 
+nodeList.ensureId()
+// returns the id of the first Element, if it has none, it generates one
+
+nodeList.on(types, listener, options)
+// add event listeners for multiple types (eg.'click mouseover')
+
+nodeList.off(types, listener, options)
+// remove event listeners for multiple types (eg.'click mouseover')
+
+
 // ...and every api available on the Elements itself
 
 ```

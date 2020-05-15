@@ -19,26 +19,25 @@ const strToDom = str => {
 
 const handler = {
     get(elements, prop){
-        if (callOnElementsSet[prop]) return elements[prop].bind(elements);
-        if (prop === 'elements') return [...elements];
+        // first check if prop exists in the "Set" (keys, forEach..., size)
+        if (prop in elements) return typeof elements[prop] === 'function' ? elements[prop].bind(elements) : elements[prop];
+        // then check an extended method
         if (extensions[prop]) {
             return function(...args){
                 return returnFromElements(this, elements, element=>extensions[prop](element, ...args))
             }
         }
+        // then check if its a property from the elements
         let first = elements.values().next().value;
         if (!first) return null;
-        if (typeof first[prop] === 'function') {
-        //if (typeof HTMLElement.prototype[prop] === 'function') { // better ask the prototype if it should be function?
+        if (typeof first[prop] === 'function') { // better ask the htmlElement-prototype if it should be function?
             return function(...args){
                 return returnFromElements(this, elements, element=>{
                     return element[prop].apply(element, args);
                 })
             }
-        } else {
-            return returnFromElements(this, elements, element=>element[prop]);
         }
-        // else return elements[prop].bind(elements); // todo if not in prototype? props of the elements-set
+        return returnFromElements(this, elements, element=>element[prop]);
     },
     set(elements, prop, value){
         for (let element of elements) element[prop] = value;
@@ -46,10 +45,12 @@ const handler = {
     }
 }
 
+/*
 const callOnElementsSet = {
     [Symbol.iterator]:1,
     'forEach':1,
 };
+*/
 
 
 function returnFromElements(proxy, elements, call) {
@@ -59,6 +60,8 @@ function returnFromElements(proxy, elements, call) {
         const value = call(element);
         if (value === undefined) {
             retIsDefined = false;
+        } else if (typeof value === 'string') { // add items if it is iterable
+            return value;
         } else if (typeof value[Symbol.iterator] === 'function') { // add items if it is iterable
             for (let item of value) returns.add(item);
         } else if (value instanceof Node) { // add items if its node
@@ -81,7 +84,7 @@ function *walkGen(el, operation, selector, incMe){
         }
         el = el[operation];
     }
-};
+}
 
 const extensions = {
     //first(el, sel) { const node = el.firstElementChild; return sel ? node && this.next(node, sel, true) : node; },
@@ -93,6 +96,23 @@ const extensions = {
     prev(...args)  { return this.prevAll(...args).next().value },
     parent(...args){ return this.parentAll(...args).next().value },
     //childs(el, selector){ return this.nextAll(el.firstElementChild, selector, true) },
+    on(el, types, listener, options){
+        for (let type of types.split(/\s/)) {
+            el.addEventListener(type, listener, options);
+        }
+    },
+    off(el, types, listener, options){
+        for (let type of types.split(/\s/)) {
+            el.removeEventListener(type, listener, options);
+        }
+    },
+    //trigger(el, type options){ // todo should i default to bubble?
+    //    const event = new CustomEvent(type, options);
+    //    el.dispatchEvent(event);
+    //},
+    ensureId(el){
+        return el.id ?? (el.id = 'gen-'+Math.random().toString(36).substr(2, 8));
+    },
 }
 
 export default domProxy;
@@ -102,24 +122,6 @@ The = function(){
     var undf, k, d=document, w=self
     ,Ext = {
         Function:{
-            chained(){ // if function returns undefined, it now returns "this"
-                var fn = this;
-                return function(){
-                    var ret = fn.apply(this,arguments);
-                    return ret===undf?this:ret;
-                };
-            },
-            each(retConst){ // make a funktion that calls itself for every properties of its instance
-                var fn = this;
-                return function(){
-                    var ret = retConst ? new retConst : [], i=0, el, v;
-                    while(el=this[i++]){ // return this.map(fn.args(arguments)) ??
-                        v = fn.apply(el,arguments);
-                        v && ret.push(v);
-                    };
-                    return ret;
-                };
-            },
             multi(){
                 var fn = this;
                 return function(a,b){
@@ -132,12 +134,6 @@ The = function(){
                     return fn.apply(this,arguments);
                 }
             },
-            args(){ // make a function with defined Arguments
-                var fn = this, args = arguments;
-                return function(){
-                    fn.apply(this,args);
-                };
-            }
         },
     };
 
@@ -159,17 +155,7 @@ The = function(){
             fn.each($.NodeList);
         }
     };
-    $.NodeList = function(els){
-        if(els){
-            // els.__proto__ = $.NodeList.prototype; return els;
-            for(var i=0,l=els.length;i<l;i++) // this.push.apply(this,els) // working with ff4
-                this[i]=els[i]
-            this.length = l;
-        }
-    };
-    $.NodeList.prototype = [];
     $.cEl = function(tag){ return d.createElement(tag); };
-    $.cNL = function(els){ return new $.NodeList(els); };
     $.extEl({
         css(prop, value){
             if (value === undf) {
@@ -199,33 +185,13 @@ The = function(){
             this['insertAdjacent'+(el.p?'Element':'HTML')](trans[who||'bottom'],el);
         },
         inj(el,who){ el.ad(this,who); },
-        on(ev,cb,useCapture){
-            for (var i=0,evs=ev.split(/\s/),x ; x=evs[i++];) {
-                this.addEventListener(x, cb, useCapture);
-            }
-        }.multi(),
-        no(ev,cb){
-            for (var i=0,evs=ev.split(/\s/),x ; x=evs[i++]; ){
-                this.removeEventListener(x, cb, false);
-            }
-        }.multi(),
-        fire(n,ce){
-            var e = new CustomEvent(n, {bubbels:true});
-            this.dispatchEvent( $.ext(e,ce||{}) );
-        },
-        one(n,cb){
-            var fn = function(e){ cb.call(this,e); this.no(n,fn); }
-            this.on(n, fn);
-        }.multi(),
-        dlg(sel, ev, cb){
-            return this.on(ev, function(ev){
-                var t = ev.target.p ? ev.target : ev.target.parentNode; // for textnodes
+        dlg(sel, types, cb){
+            return this.on(types, function(event){
+                var t = event.target.p ? event.target : event.target.parentNode; // for textnodes
                 var el = t.p(sel,1);
-                el && el!==d && cb.call(el,ev);
+                el && el!==d && cb.call(el,event);
             });
         },
-        show(){ this.style.display='block'; },
-        hide(){ this.style.display='none'; },
         zTop(){
             var p=this.p(), z=p.$zTop;
             if(!z){
