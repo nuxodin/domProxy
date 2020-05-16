@@ -40,8 +40,14 @@ $('li').on('click mouseover',function listener(e){
     $(this).off(e.type, listener)
 })
 
+// set
 $('span').hidden = true;
 
+
+// chaining
+$(spanEl).removeAttribute('hidden').setAttribute('contenteditable','true');
+
+// 
 var els = $('<div style="background:blue;">asdf</div> abc <div style="background:blue;">asdf</div>');
 document.body.append(...els.keys());
 
