@@ -22,7 +22,7 @@ $('.el').nextAll('.deletable', true /* including self */).remove();
 ### how it works
 
 All nodes are wrapped with a proxy.
-When accessing the nodes, the lib first checks if there is an own property, if not, the correct property of the elements is used.
+When accessing a property of the nodeList, the lib first checks if there is an own property, if not, the correct property of the elements is used.
 If a method returns `undefined ` on elements, the domProxy will be returned to allow chaining. (addEventListener, setAttribute, ...)
 
 
