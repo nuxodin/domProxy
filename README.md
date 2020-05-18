@@ -64,7 +64,28 @@ nodeList.off(types, listener, options)
 
 
 // ...and every api available on the Elements itself
-
+nodeList.getAttribute
+nodeList.setAttribute
+nodeList.hasAttribute
+nodeList.closest
+nodeList.matches
+nodeList.insertAdjacentElement
+nodeList.insertAdjacentText
+nodeList.getBoundingClientRect
+nodeList.querySelector
+nodeList.querySelectorAll
+nodeList.before
+nodeList.after
+nodeList.replaceWith
+nodeList.remove
+nodeList.prepend
+nodeList.append
+nodeList.innerHTML
+nodeList.children
+nodeList.cloneNode
+nodeList.addEventListener
+...
+...
 ```
 
 ### take part
