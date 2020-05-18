@@ -1,4 +1,4 @@
-# domProxy (alpha)
+# domProxy (beta)
 
 lightweight **~700 bytes** (gzip) at the moment, 1% of jQuerys size!  
 I ask you to test and participate  
