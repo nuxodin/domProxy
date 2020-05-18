@@ -1,6 +1,6 @@
 # domProxy (beta)
 
-lightweight **~700 bytes** (gzip) at the moment, 1% of jQuerys size!  
+lightweight **under 1KB** (gzip) at the moment!  
 I ask you to test and participate  
 
 ## What jQuery would look like if it was released in 2021
