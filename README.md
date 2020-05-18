@@ -62,6 +62,12 @@ nodeList.on(types, listener, options)
 nodeList.off(types, listener, options)
 // remove event listeners for multiple types (eg.'click mouseover')
 
+nodeList.trigger(type, init)
+// like dispatchEvent(new CustomEvent(type, init)) bud defaults to bubbles:true
+
+nodeList.css(name, value?)
+// get or set (value) styles
+
 
 // ...and every api available on the Elements itself
 nodeList.getAttribute
