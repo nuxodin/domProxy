@@ -1,7 +1,5 @@
-{  
-    const d = document;
-
-    window.domProxy = function(arg) {
+{
+    window.domProxy = arg => {
         const list = new Set(
             arg instanceof Node
                 ? [arg]
@@ -11,16 +9,17 @@
         );
         return new Proxy(list, handler);
     }
-    
+
+    const undef = void 0;
+    const d = document;
     const strToDom = str => {
         const el = d.createElement('template');
         el.innerHTML = str;
         return el.content.childNodes;
     }
-    
     const handler = {
         get(elements, prop){
-            // first check if prop exists in the "Set" (keys, forEach..., size)
+            // first check if prop exists in the "Set" (keys, forEach, size, add, ...)
             if (prop in elements) {
                 let property = elements[prop]
                 return typeof property === 'function' ? property.bind(elements) : property;
@@ -48,22 +47,14 @@
             return true;
         }
     }
-    
-    /*
-    const callOnElementsSet = {
-        [Symbol.iterator]:1,
-        'forEach':1,
-    };
-    */
-    
-    
-    function returnFromElements(proxy, elements, call) {
+
+    const returnFromElements = (proxy, elements, call)=>{
         const returns = new Set();
         let returnsUndefined = false;
         for (let element of elements) {
             const value = call(element);
             if (typeof value === 'string') return value; // if its a string return from first element
-            if (value === undefined) { // chain if return value is undefined
+            if (value === undef) { // chain if return value is undefined
                 returnsUndefined = true;
             } else if (typeof value[Symbol.iterator] === 'function') { // add items if it is iterable
                 for (let item of value) returns.add(item);
@@ -76,7 +67,7 @@
         if (returnsUndefined) return proxy;
         return domProxy(returns);
     }
-    
+
     function *walkGen(el, operation, selector, incMe){
         if (!incMe) el = el[operation];
         while (el) {
@@ -88,10 +79,8 @@
             el = el[operation];
         }
     }
-    
+
     const extensions = {
-        //first(el, sel) { const node = el.firstElementChild; return sel ? node && this.next(node, sel, true) : node; },
-        //last(el, sel)  { const node = el.lastElementChild;  return sel ? node && this.prev(node, sel, true) : node; },
         nextAll  :(el, sel, incMe) => walkGen(el, 'nextElementSibling', sel, incMe),
         prevAll  :(el, sel, incMe) => walkGen(el, 'previousElementSibling', sel, incMe) ,
         parentAll:(el, sel, incMe) => walkGen(el, 'parentNode', sel, incMe) ,
@@ -109,26 +98,40 @@
                 el.removeEventListener(type, listener, options);
             }
         },
-        //trigger(el, type options){ // todo should i default to bubble?
-        //    const event = new CustomEvent(type, options);
-        //    el.dispatchEvent(event);
-        //},
+        trigger(el, type, options={}){
+            if(options.bubbles===undef) options.bubbles = true; // default bubbles
+            //options = {...{bubbles:true}, ...options};
+            el.dispatchEvent(new CustomEvent(type, options));
+        },
+        css(el, prop, value){
+            if (value === undef) return getComputedStyle(el)[prop];
+            el.style[prop] = value;
+        },
     }
-    
-    
-    /* old code, for inspirations
-    css(prop, value){
-        if (value === undf) {
-            k = getComputedStyle(this,null);
-            return (k[prop]||k['-'+vendor+'-'+prop])+'';
+
+    /* // allow object as arguments
+    const objectifyArgs = fn=>{
+        return function(el, name, ...rest){
+            if (typeof name === 'string') {
+                return fn.call(this, el, name, ...rest);
+            }
+            for (let key in name) {
+                fn.call(this, el, key, name[key], ...rest);
+            }
         }
-        this.style[prop] = this.style['-'+vendor+'-'+prop] = value;
-    }.multi(),
+    }
+    extensions.css = objectifyArgs((el, prop, value)=>{
+        if (value === undef) return getComputedStyle(el)[prop];
+        el.style[prop] = value;
+    });
+    */
+
+    /* old code, for inspirations
     attr(name,value){
         if(value===undf) return this.getAttribute(name);
         if(value===null) return this.removeAttribute(name);
         this.setAttribute(name,value);
-    }.multi(),
+    },
     addClass(v){ !this.hsCl(v) && (this.className += ' '+v); },
     removeClass(v){ this.className = this.className.replace(new RegExp("(^|\\s)"+v+"(\\s|$)"), '');},
     hasClass(v){ return this.className.contains(v,' '); },
@@ -164,9 +167,9 @@
         this.style.zIndex = p.$zTop = z+1;
     },
     html(v){ this.innerHTML = v; },
-    
+
     */
-    
+
 }
 
 export default domProxy;

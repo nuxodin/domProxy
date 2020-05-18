@@ -42,12 +42,16 @@ $('li').on('click mouseover',function listener(e){
 
 // set
 $('span').hidden = true;
+$('span').trigger('click');
+$('span').trigger('click', {bubbles:true});
+$('span').trigger('click', {bubbles:false});
+$('i').css('background-color', 'blue')
 
 
 // chaining
 $(spanEl).removeAttribute('hidden').setAttribute('contenteditable','true');
 
-// 
+//
 var els = $('<div style="background:blue;">asdf</div> abc <div style="background:blue;">asdf</div>');
 document.body.append(...els.keys());
 
