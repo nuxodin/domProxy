@@ -19,6 +19,7 @@
     }
     const handler = {
         get(elements, prop){
+console.log(prop)
             // first check if prop exists in the "Set" (keys, forEach, size, add, ...)
             if (prop in elements) {
                 let property = elements[prop]
