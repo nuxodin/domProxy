@@ -30,10 +30,10 @@ If a method returns `undefined ` on elements, the domProxy will be returned to a
 
 ```js
 // constructor:
-$(element) // or:
-$([element, element, ...]) // also nodeList, htmlCollection, Set... or:
-$('<div>html-elements</div><h1>test</h1>') // or:
-$('.selector')
+domProxy(element) // or:
+domProxy([element, element, ...]) // also nodeList, htmlCollection, Set... or:
+domProxy('<div>html-elements</div><h1>test</h1>') // or:
+domProxy('.selector')
 
 nodeList.next(selector?, includingSelf?) 
 // returns next sibling that matches
