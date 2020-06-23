@@ -12,11 +12,11 @@ The goal of this project is to integrate only the really useful apis.
 ### ussage
 
 ```js
-import $ from './domProxy.js';
+import domProxy from './domProxy.js';
 
-$('.el').children.hidden = true;
-$('.el').setAttribute('data-b','x').setAttribute('data-b', 'y');
-$('.el').nextAll('.deletable', true /* including self */).remove();
+domProxy('.el').children.hidden = true;
+domProxy('.el').setAttribute('data-b','x').setAttribute('data-b', 'y');
+domProxy('.el').nextAll('.deletable', true /* including self */).remove();
 ```
 
 ### how it works
