@@ -121,10 +121,6 @@ console.log(prop)
             }
         }
     }
-    extensions.css = objectifyArgs((el, prop, value)=>{
-        if (value === undef) return getComputedStyle(el)[prop];
-        el.style[prop] = value;
-    });
     */
 
     /* old code, for inspirations
