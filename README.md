@@ -12,11 +12,11 @@ The goal of this project is to integrate only the really useful apis.
 ### ussage
 
 ```js
-import $ from './domProxy.js';
+import domProxy from './domProxy.js';
 
-$('.el').children.hidden = true;
-$('.el').setAttribute('data-b','x').setAttribute('data-b', 'y');
-$('.el').nextAll('.deletable', true /* including self */).remove();
+domProxy('.el').children.hidden = true;
+domProxy('.el').setAttribute('data-b','x').setAttribute('data-b', 'y');
+domProxy('.el').nextAll('.deletable', true /* including self */).remove();
 ```
 
 ### how it works
@@ -30,10 +30,10 @@ If a method returns `undefined ` on elements, the domProxy will be returned to a
 
 ```js
 // constructor:
-$(element) // or:
-$([element, element, ...]) // also nodeList, htmlCollection, Set... or:
-$('<div>html-elements</div><h1>test</h1>') // or:
-$('.selector')
+domProxy(element) // or:
+domProxy([element, element, ...]) // also nodeList, htmlCollection, Set... or:
+domProxy('<div>html-elements</div><h1>test</h1>') // or:
+domProxy('.selector')
 
 nodeList.next(selector?, includingSelf?) 
 // returns next sibling that matches
@@ -63,7 +63,7 @@ nodeList.off(types, listener, options)
 // remove event listeners for multiple types (eg.'click mouseover')
 
 nodeList.trigger(type, init)
-// like dispatchEvent(new CustomEvent(type, init)) bud defaults to bubbles:true
+// like dispatchEvent(new CustomEvent(type, init)) but defaults to bubbles:true
 
 nodeList.css(name, value?)
 // get or set (value) styles
