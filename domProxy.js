@@ -1,4 +1,4 @@
-{
+{ // <= why?
     window.domProxy = arg => {
         const list = new Set(
             arg instanceof Node
@@ -109,66 +109,7 @@
         },
     }
 
-    /* // allow object as arguments
-    const objectifyArgs = fn=>{
-        return function(el, name, ...rest){
-            if (typeof name === 'string') {
-                return fn.call(this, el, name, ...rest);
-            }
-            for (let key in name) {
-                fn.call(this, el, key, name[key], ...rest);
-            }
-        }
-    }
-    extensions.css = objectifyArgs((el, prop, value)=>{
-        if (value === undef) return getComputedStyle(el)[prop];
-        el.style[prop] = value;
-    });
-    */
 
-    /* old code, for inspirations
-    attr(name,value){
-        if(value===undf) return this.getAttribute(name);
-        if(value===null) return this.removeAttribute(name);
-        this.setAttribute(name,value);
-    },
-    addClass(v){ !this.hsCl(v) && (this.className += ' '+v); },
-    removeClass(v){ this.className = this.className.replace(new RegExp("(^|\\s)"+v+"(\\s|$)"), '');},
-    hasClass(v){ return this.className.contains(v,' '); },
-    is(sel){
-        if (this===d) return sel===this;  // ie9 on document
-        return (sel.dlg ? sel===this : this.matches(sel) ) && this;
-    },
-    children(sel){ return sel ? this.ch().is(sel) : $.cNL(this.children); },
-    has(el,incMe){ return this===el ? (incMe?this:false) : this.contains(el) && this; },
-    add(el,who){
-        var trans = {after:'afterEnd',bottom:'beforeEnd',before:'beforeBegin',top:'afterBegin'};
-        this['insertAdjacent'+(el.p?'Element':'HTML')](trans[who||'bottom'],el);
-    },
-    inject(el,who){ el.ad(this,who); },
-    delegate(sel, types, cb){
-        return this.on(types, function(event){
-            var t = event.target.p ? event.target : event.target.parentNode; // for textnodes
-            var el = t.p(sel,1);
-            el && el!==d && cb.call(el,event);
-        });
-    },
-    zTop(){
-        var p=this.p(), z=p.$zTop;
-        if(!z){
-            for (var i=0, el, cs=p.ch(), elZ; el = cs[i++];){
-                elZ = el.css('z-index')*1;
-                z = Math.max(z,elZ);//elZ > z ? elZ : z;
-            }
-        }
-        p!==d && p.zTop();
-        //p.style.zIndex = p.css('z-index')*1||0; // prevent mix with other contexts (override default auto)
-        z = z||0;
-        this.style.zIndex = p.$zTop = z+1;
-    },
-    html(v){ this.innerHTML = v; },
-
-    */
 
 }
 
