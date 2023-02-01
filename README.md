@@ -9,24 +9,24 @@ Some things i still miss from jQuery, like assigning multiple events to multiple
 Using js-proxies, its now possible to do this with very little code.  
 The goal of this project is to integrate only the really useful apis.  
 
-### ussage
+### Ussage
 
 ```js
 import domProxy from './domProxy.js';
 
-domProxy('.el').children.hidden = true;
-domProxy('.el').setAttribute('data-b','x').setAttribute('data-b', 'y');
-domProxy('.el').nextAll('.deletable', true /* including self */).remove();
+domProxy('.el').children.hidden = true; // children is also a domProxy
+domProxy('.el').setAttribute('data-b','x').setAttribute('data-b', 'y'); // chaining
+domProxy('.el').nextAll('.deletable', true).remove(); /* traversal methods, second argument means including the element itself */
 ```
 
-### how it works
+### How it works
 
 All nodes are wrapped with a proxy.
 When accessing a property of the nodeList, the lib first checks if there is an own property, if not, the correct property of the elements is used.
 If a method returns `undefined ` on elements, the domProxy will be returned to allow chaining. (addEventListener, setAttribute, ...)
 
 
-### api
+### API
 
 ```js
 // constructor:
@@ -54,7 +54,7 @@ nodeList.parentAll(selector?, includingSelf?)
 // returns all parents matching
 
 nodeList.ensureId()
-// returns the id of the first Element, if it has none, it generates one
+// returns the id of the Element, if it has none, it generates one
 
 nodeList.on(types, listener, options)
 // add event listeners for multiple types (eg.'click mouseover')
@@ -94,6 +94,13 @@ nodeList.addEventListener
 ...
 ```
 
-### take part
+### Take part
 I am very happy about every participation, even if it is only spelling corrections.  
 And leave a star if you like it!
+
+
+### Similar projects
+
+https://gist.github.com/AdaRoseCannon/d95a7cbb8edd730443c62f0daff875ac
+
+https://github.com/WebReflection/handy-wrap
