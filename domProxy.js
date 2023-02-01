@@ -17,6 +17,7 @@ const strToDom = str => {
     el.innerHTML = str;
     return el.content.childNodes;
 }
+
 const handler = {
     get(elements, prop){
         // first check if prop exists in the "Set" (keys, forEach, size, add, ...)
@@ -87,7 +88,7 @@ const extensions = {
     next(...args)  { return this.nextAll(...args).next().value },
     prev(...args)  { return this.prevAll(...args).next().value },
     parent(...args){ return this.parentAll(...args).next().value },
-    ensureId:(el) => el.id ?? (el.id = 'gen-'+Math.random().toString(36).substr(2, 8)),
+    ensureId:(el) => el.id ?? (el.id = 'gen-'+Math.random().toString(36).substring(2, 10)),
     on(el, types, listener, options){
         for (const type of types.split(/\s/)) {
             el.addEventListener(type, listener, options);
@@ -99,9 +100,8 @@ const extensions = {
         }
     },
     trigger(el, type, options={}){
-        if(options.bubbles===undef) options.bubbles = true; // default bubbles
-        //options = {...{bubbles:true}, ...options};
-        el.dispatchEvent(new CustomEvent(type, options));
+        options.bubbles ??= true; // default bubbles
+        el.dispatchEvent(new Event(type, options));
     },
     css(el, prop, value){
         if (value === undef) return getComputedStyle(el)[prop];
