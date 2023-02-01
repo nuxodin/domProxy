@@ -70,4 +70,3 @@ describe('constructor Set', function () {
         chai.expect(original.size).to.equal(2);
     });
 });
-
