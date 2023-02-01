@@ -16,7 +16,7 @@ import domProxy from './domProxy.js';
 
 domProxy('.el').children.hidden = true; // children is also a domProxy
 domProxy('.el').setAttribute('data-b','x').setAttribute('data-b', 'y'); // chaining
-domProxy('.el').nextAll('.deletable', true).remove(); /* traversal methods, second argument means including the element itself */
+domProxy('.el').nextAll('.deletable', true).remove(); /* traversal methods: second argument means including the element itself */
 ```
 
 ### How it works
