@@ -12,7 +12,7 @@ describe('setter', function () {
         chai.expect(document.head.className).to.equal('test2');
     });
     it('setting multiple events', function () {
-        var listener = function(){ };
+        const listener = function(){ };
         $('body, head').onmouseover = listener;
         chai.expect(document.body.onmouseover).to.equal(listener);
         chai.expect(document.head.onmouseover).to.equal(listener);
@@ -21,4 +21,3 @@ describe('setter', function () {
         $('.doesnotExists').classList = 'xyz';
     });
 });
-
