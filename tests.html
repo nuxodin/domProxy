@@ -1,5 +1,10 @@
 <!DOCTYPE html>
-
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width">
+        <title>domProxy tests</title>
+<body>
 <h1>domProxy tests</h1>
 
 <ul>
@@ -28,6 +33,7 @@ import $ from './domProxy.js';
 let span = $(spanEl);
 
 let italics = span.nextAll('span', true);
+console.log(span.nextAll());
 console.log(italics.size)
 for (let italic of italics) {
     console.log(italic);

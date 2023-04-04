@@ -1,7 +1,6 @@
 import $ from '../domProxy.js';
 
 describe('getters primitives', function () {
-    const body = document.body;
     it('getter className on singel element', function () {
         document.body.className = 'test4';
         chai.expect($('body').className).to.equal('test4');
@@ -12,6 +11,11 @@ describe('getters primitives', function () {
     });
     it('getter on void list should be null?', function () {
         chai.expect($('.doesNotExists').className).to.equal(null);
+    });
+    it('ensureId()', function () {
+        const genId = $('body').ensureId();
+        chai.expect(genId).to.not.equal('');
+        chai.expect(document.body.id).to.equal(genId);
     });
 });
 

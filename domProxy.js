@@ -57,7 +57,7 @@ const returnFromElements = (proxy, elements, call)=>{
         if (typeof value === 'string') return value; // if its a string return from first element
         if (value === undef) { // chain if return value is undefined
             returnsUndefined = true;
-        } else if (typeof value[Symbol.iterator] === 'function') { // add items if it is iterable
+        } else if (typeof value?.[Symbol.iterator] === 'function') { // add items if it is iterable
             for (const item of value) returns.add(item);
         } else if (value instanceof Node) { // add items if its node
             returns.add(value);
@@ -72,11 +72,7 @@ const returnFromElements = (proxy, elements, call)=>{
 function *walkGen(el, operation, selector, incMe){
     if (!incMe) el = el[operation];
     while (el) {
-        if (selector) {
-            if (el.matches(selector)) yield el;
-        } else {
-            yield next;
-        }
+        if (!selector || el.matches(selector)) yield el;
         el = el[operation];
     }
 }
@@ -88,7 +84,7 @@ const extensions = {
     next(...args)  { return this.nextAll(...args).next().value },
     prev(...args)  { return this.prevAll(...args).next().value },
     parent(...args){ return this.parentAll(...args).next().value },
-    ensureId:(el) => el.id ?? (el.id = 'gen-'+Math.random().toString(36).substring(2, 10)),
+    ensureId:(el) => el.id || (el.id = 'gen-'+Math.random().toString(36).substring(2, 10)),
     on(el, types, listener, options){
         for (const type of types.split(/\s/)) {
             el.addEventListener(type, listener, options);
