@@ -1,4 +1,4 @@
-# domProxy (beta)
+# domProxy
 
 lightweight **under 1KB** (gzip) at the moment!  
 I ask you to test and participate  
