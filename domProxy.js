@@ -26,7 +26,7 @@ const handler = {
             return typeof property === 'function' ? property.bind(elements) : property;
         }
         // then check if an extended property exists
-        if (extensions[prop]) {
+        if (Object.hasOwn(extensions, prop)) {
             return function(...args){
                 return returnFromElements(this, elements, element=>extensions[prop](element, ...args))
             }
